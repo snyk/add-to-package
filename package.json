@@ -1,21 +1,26 @@
 {
   "name": "snyk-add-to-package",
-  "version": "1.0.0",
   "description": "Adds Snyk to the package dependencies",
   "main": "lib/index.js",
   "scripts": {
     "es5ify": "babel --ignore=node_modules . -d .",
     "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
-    "test": "tap -R spec test/*.test.js"
+    "test": "tap -R spec test/*.test.js",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [],
   "author": "Remy Sharp",
   "license": "Apache-2.0",
   "devDependencies": {
     "tap": "^5.7.2",
-    "tap-only": "0.0.5"
+    "tap-only": "0.0.5",
+    "semantic-release": "^4.3.5"
   },
   "dependencies": {
     "undefsafe": "^1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Snyk/add-to-package.git"
   }
 }

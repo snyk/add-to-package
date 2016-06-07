@@ -5,10 +5,19 @@ cache:
     - node_modules
 notifications:
   email: false
-matrix:
-  include:
-    - node_js: "6"
-    - node_js: "4"
-    - node_js: "0.10"
+node_js:
+  - '6'
+  - '5'
+  - '4'
+  - '0.10'
 before_script:
   - npm prune
+  - npm run es5ify
+after_success:
+  - 'curl -Lo travis_after_all.py https://git.io/travis_after_all'
+  - python travis_after_all.py
+  - export $(cat .to_export_back) &> /dev/null
+  - npm run semantic-release
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/

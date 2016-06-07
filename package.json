@@ -25,6 +25,9 @@
     "babel-runtime": "^6.9.2",
     "undefsafe": "^1.1.0"
   },
+  "peerDependencies": {
+    "core-js": "*"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Snyk/add-to-package.git"

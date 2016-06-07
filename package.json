@@ -1,0 +1,21 @@
+{
+  "name": "snyk-add-to-package",
+  "version": "1.0.0",
+  "description": "Adds Snyk to the package dependencies",
+  "main": "lib/index.js",
+  "scripts": {
+    "es5ify": "babel --ignore=node_modules . -d .",
+    "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
+    "test": "tap -R spec test/*.test.js"
+  },
+  "keywords": [],
+  "author": "Remy Sharp",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "tap": "^5.7.2",
+    "tap-only": "0.0.5"
+  },
+  "dependencies": {
+    "undefsafe": "^1.1.0"
+  }
+}

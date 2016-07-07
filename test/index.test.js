@@ -12,7 +12,7 @@ test('add(test)', t => {
 
   lib.add(pkg, 'test', v);
   t.match(pkg.scripts.test, 'snyk test', 'contains test command');
-  t.equal(pkg.devDependencies.snyk, v, 'includes snyk and latest');
+  t.equal(pkg.devDependencies.snyk, '^' + v, 'includes snyk and latest');
 
   t.end();
 });
@@ -22,7 +22,7 @@ test('add(protect)', t => {
 
   lib.add(pkg, 'protect', v);
   t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
-  t.equal(pkg.dependencies.snyk, v, 'includes snyk and latest');
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
   t.equal(pkg.snyk, true, 'flagged as snyk');
 
   t.end();
@@ -36,7 +36,7 @@ test('add(test && protect) on empty package', t => {
   lib.add(pkg, 'test', v);
   lib.add(pkg, 'protect', v);
   t.match(pkg.scripts.test, 'snyk test', 'contains test command');
-  t.equal(pkg.dependencies.snyk, v, 'includes snyk and latest');
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
 
   t.deepEqual(pkg, {
     name: 'empty',
@@ -47,7 +47,7 @@ test('add(test && protect) on empty package', t => {
     },
     devDependencies: {},
     dependencies: {
-      snyk: v,
+      snyk: `^${v}`,
     },
     snyk: true,
   }, 'strctured as expected');
@@ -64,7 +64,7 @@ test('already testing moves to prod deps when protect', t => {
 
   lib.add(pkg, 'protect', v);
   t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
-  t.equal(pkg.dependencies.snyk, v, 'includes snyk and latest');
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
   t.isa(pkg.devDependencies.snyk, undefined, 'snyk stripped from devDeps');
   t.equal(pkg.snyk, true, 'flagged as snyk');
 

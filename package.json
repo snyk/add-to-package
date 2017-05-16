@@ -6,7 +6,9 @@
     "es5ify": "babel --ignore=node_modules . -d .",
     "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
     "test": "tap -R spec test/*.test.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "Remy Sharp",
@@ -23,7 +25,8 @@
   },
   "dependencies": {
     "babel-runtime": "^6.9.2",
-    "undefsafe": "^1.1.0"
+    "undefsafe": "^1.1.0",
+    "snyk": "^1.30.1"
   },
   "peerDependencies": {
     "core-js": "*"
@@ -39,5 +42,6 @@
   "version": "1.0.0",
   "directories": {
     "test": "test"
-  }
+  },
+  "snyk": true
 }

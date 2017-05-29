@@ -28,6 +28,17 @@ test('add(protect)', t => {
   t.end();
 });
 
+test('add(protect) npm 5', t => {
+  const pkg = getPkg();
+
+  lib.add(pkg, 'protect', v, 'prepare');
+  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
 test('add(test && protect) on empty package', t => {
   const pkg = {
     name: 'empty',
@@ -62,8 +73,8 @@ test('already testing moves to prod deps when protect', t => {
   pkg.devDependencies.snyk = oldVersion;
   pkg.scripts.test = ' && snyk test';
 
-  lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
+  lib.add(pkg, 'protect', v, 'prepare');
+  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
   t.isa(pkg.devDependencies.snyk, undefined, 'snyk stripped from devDeps');
   t.equal(pkg.snyk, true, 'flagged as snyk');

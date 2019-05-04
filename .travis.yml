@@ -1,23 +1,26 @@
 sudo: false
 language: node_js
+node_js:
+  - "12"
+  - "10"
+  - "8"
+  - "6"
 cache:
   directories:
     - node_modules
+install:
+  - npm install
+script:
+  - npm test
+jobs:
+  include:
+    - stage: release
+      if: branch = master AND type != pull_request
+      node_js: "10"
+      script:
+        - npx semantic-release
+branches:
+  only:
+    - master
 notifications:
   email: false
-node_js:
-  - '6'
-  - '5'
-  - '4'
-  - '0.10'
-before_script:
-  - npm prune
-  - npm run es5ify
-after_success:
-  - 'curl -Lo travis_after_all.py https://git.io/travis_after_all'
-  - python travis_after_all.py
-  - export $(cat .to_export_back) &> /dev/null
-  - npm run semantic-release
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/

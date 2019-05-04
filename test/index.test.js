@@ -1,4 +1,4 @@
-const test = require('tap-only');
+const { test } = require('tap');
 const lib = require('../');
 const fs = require('fs');
 const v = '2.0.0';

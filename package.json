@@ -2,41 +2,34 @@
   "name": "snyk-add-to-package",
   "description": "Adds Snyk to the package dependencies",
   "main": "lib/index.js",
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
   "scripts": {
-    "es5ify": "babel --ignore=node_modules . -d .",
     "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
     "test": "tap -R spec test/*.test.js",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [],
-  "author": "Remy Sharp",
+  "author": "snyk.io",
   "license": "Apache-2.0",
   "devDependencies": {
-    "babel-cli": "^6.9.0",
-    "babel-plugin-es6-promise": "^1.0.0",
-    "babel-plugin-transform-runtime": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-3": "^6.5.0",
-    "semantic-release": "^4.3.5",
-    "tap": "^5.7.2",
-    "tap-only": "0.0.5"
+    "tap": "^12.6.1"
   },
-  "dependencies": {
-    "babel-runtime": "^6.9.2",
-    "undefsafe": "^1.1.0"
-  },
-  "peerDependencies": {
-    "core-js": "*"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Snyk/add-to-package.git"
+    "url": "https://github.com/snyk/add-to-package.git"
   },
   "bugs": {
-    "url": "https://github.com/Snyk/add-to-package/issues"
+    "url": "https://github.com/snyk/add-to-package/issues"
   },
-  "homepage": "https://github.com/Snyk/add-to-package#readme",
-  "version": "1.0.0",
+  "homepage": "https://github.com/snyk/add-to-package#readme",
   "directories": {
     "test": "test"
   }

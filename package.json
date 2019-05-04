@@ -1,5 +1,5 @@
 {
-  "name": "snyk-add-to-package",
+  "name": "@snyk/add-to-package",
   "description": "Adds Snyk to the package dependencies",
   "main": "lib/index.js",
   "files": [

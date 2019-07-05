@@ -7,6 +7,10 @@ function getPkg() {
   return JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
 }
 
+function loadFile(fileName) {
+  return JSON.parse(fs.readFileSync(__dirname + '/fixtures/' + fileName, 'utf8'));
+}
+
 test('add(test)', t => {
   const pkg = getPkg();
 
@@ -21,7 +25,69 @@ test('add(protect)', t => {
   const pkg = getPkg();
 
   lib.add(pkg, 'protect', v);
+  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.ok(!pkg.scripts.prepublish, 'doe not contains prepublish');
+
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('script exists but not snyk protect (protect)', t => {
+  const pkg = loadFile('missing-snyk-protect-package.json');
+
+  lib.add(pkg, 'protect', v);
+  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'prepublish preserved');
+  t.ok(!pkg.scripts.prepare, 'prepare not added');
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('do not add another script if one exists (protect)', t => {
+  const pkg = loadFile('with-prepublish-package.json');
+  lib.add(pkg, 'protect', v);
   t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
+  t.ok(!pkg.scripts.prepare, 'prepare not added');
+
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('update the same script that exists (protect)', t => {
+  const pkg = loadFile('prepublish-without-snyk-package.json');
+  lib.add(pkg, 'protect', v);
+  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
+  t.ok(!pkg.scripts.prepare, 'prepare not added');
+
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('if both prepare/prepublish exists update first one (protect)', t => {
+  const pkg = loadFile('with-prepare-and-prepublish-package.json');
+  lib.add(pkg, 'protect', v);
+  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.scripts.prepublish, 'npm run build', 'prepublish not changed');
+
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('default to prepare (protect)', t => {
+  const pkg = getPkg();
+  lib.add(pkg, 'protect', v);
+  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.ok(!pkg.scripts.prepublish, 'prepublish not added');
+
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
   t.equal(pkg.snyk, true, 'flagged as snyk');
 
@@ -53,7 +119,7 @@ test('add(test && protect) on empty package', t => {
     name: 'empty',
     scripts: {
       'snyk-protect': 'snyk protect',
-      prepublish: 'npm run snyk-protect',
+      prepare: 'npm run snyk-protect',
       test: 'snyk test',
     },
     devDependencies: {},

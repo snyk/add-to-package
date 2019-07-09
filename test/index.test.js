@@ -49,7 +49,7 @@ test('script exists but not snyk protect (protect)', t => {
 test('do not add another script if one exists (protect)', t => {
   const pkg = loadFile('with-prepublish-package.json');
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
   t.ok(!pkg.scripts.prepare, 'prepare not added');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
@@ -61,7 +61,7 @@ test('do not add another script if one exists (protect)', t => {
 test('update the same script that exists (protect)', t => {
   const pkg = loadFile('prepublish-without-snyk-package.json');
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.scripts.prepublish, 'npm run snyk-protect && npm run build', 'contains protect command');
   t.ok(!pkg.scripts.prepare, 'prepare not added');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
@@ -73,7 +73,7 @@ test('update the same script that exists (protect)', t => {
 test('if both prepare/prepublish exists update first one (protect)', t => {
   const pkg = loadFile('with-prepare-and-prepublish-package.json');
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.scripts.prepare, 'npm run snyk-protect && npm run test', 'contains protect command');
   t.equal(pkg.scripts.prepublish, 'npm run build', 'prepublish not changed');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
@@ -85,7 +85,7 @@ test('if both prepare/prepublish exists update first one (protect)', t => {
 test('default to prepare (protect)', t => {
   const pkg = getPkg();
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
+  t.equal(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
   t.ok(!pkg.scripts.prepublish, 'prepublish not added');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');

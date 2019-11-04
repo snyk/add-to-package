@@ -136,10 +136,22 @@ test('already testing moves to prod deps when protect', t => {
   t.end();
 });
 
-test('update the same script that exists (protect) from npm to yarn', t => {
+test('update the same script that exists (protect with extra commands) from npm to yarn', t => {
   const pkg = loadFile('with-prepublish-npm-but-now-yarn.json');
   lib.add(pkg, 'protect', v, undefined, 'yarn');
   t.equal(pkg.scripts.prepublish, 'yarn run snyk-protect && yarn run build', 'contains protect command');
+  t.ok(!pkg.scripts.prepare, 'prepare not added');
+
+  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  t.equal(pkg.snyk, true, 'flagged as snyk');
+
+  t.end();
+});
+
+test('update the same script that exists (protect) from npm to yarn', t => {
+  const pkg = loadFile('npm-with-prepublish-simple-now-yarn.json');
+  lib.add(pkg, 'protect', v, undefined, 'yarn');
+  t.equal(pkg.scripts.prepublish, 'yarn run snyk-protect', 'contains protect command');
   t.ok(!pkg.scripts.prepare, 'prepare not added');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');

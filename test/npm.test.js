@@ -1,5 +1,5 @@
 const { test } = require('tap');
-const lib = require('../');
+const lib = require('../lib');
 const fs = require('fs');
 const v = '2.0.0';
 
@@ -26,7 +26,7 @@ test('add(protect)', t => {
 
   lib.add(pkg, 'protect', v);
   t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
-  t.ok(!pkg.scripts.prepublish, 'doe not contains prepublish');
+  t.ok(!pkg.scripts.prepublish, 'does not contain prepublish');
 
   t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
   t.equal(pkg.snyk, true, 'flagged as snyk');
@@ -127,7 +127,7 @@ test('add(test && protect) on empty package', t => {
       snyk: `^${v}`,
     },
     snyk: true,
-  }, 'strctured as expected');
+  }, 'structured as expected');
 
   t.end();
 });

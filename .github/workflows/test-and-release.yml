@@ -46,7 +46,7 @@ jobs:
           key: ${{ runner.os }}-node-14-${{ hashFiles('**/package.json') }}
           restore-keys: ${{ runner.os }}-node-14-
       - run: npm install
-      - run: npx semantic-release
+      - run: npm run release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}

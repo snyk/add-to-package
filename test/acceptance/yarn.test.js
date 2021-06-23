@@ -37,10 +37,10 @@ it('add(protect)', () => {
   expect(pkg).toEqual({
     scripts: {
       prepare: 'yarn run snyk-protect',
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
@@ -55,10 +55,10 @@ it('script exists but not snyk protect (protect)', () => {
     version: '1.0.0',
     scripts: {
       prepublish: 'yarn run snyk-protect',
-      // 'snyk-protect': 'snyk protect',  // this is not in the results - is this a bug?
+      'snyk-protect': 'snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies
     },
     snyk: true,
@@ -73,11 +73,11 @@ it('do not add another script if one exists (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'yarn run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -92,11 +92,11 @@ it('update the same script that exists (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'yarn run snyk-protect && yarn run build',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -111,12 +111,12 @@ it('if both prepare/prepublish exists update first one (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'yarn run build',
       'prepare': 'yarn run snyk-protect && yarn run test',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -129,11 +129,11 @@ it('default to prepare (protect)', () => {
 
   expect(pkg).toEqual({
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepare': 'yarn run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
@@ -149,19 +149,21 @@ it('add(test && protect) on empty package', () => {
   expect(pkg).toEqual({
     name: 'empty',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepare: 'yarn run snyk-protect',
       test: 'snyk test',
     },
-    devDependencies: {},
-    dependencies: {
+    devDependencies: {
       snyk: `^${v}`,
+    },
+    dependencies: {
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
 });
 
-it('already testing moves to prod deps when protect', () => {
+it('keeps `snyk` in devDependencies and adds `@snyk/protect` to dependencies if already testing and you add protect', () => {
   const pkg = {
     scripts: {
       test: ' && snyk test',
@@ -175,14 +177,16 @@ it('already testing moves to prod deps when protect', () => {
 
   expect(pkg).toEqual({
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepare: 'yarn run snyk-protect',
       test: ' && snyk test',
     },
     dependencies: {
+      '@snyk/protect': `^${v}`,
+    },
+    devDependencies: {
       snyk: `^${v}`,
     },
-    devDependencies: {},
     snyk: true,
   });
 });
@@ -195,11 +199,11 @@ it('update the same script that exists (protect with extra commands) from npm to
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepublish: 'yarn run snyk-protect && yarn run build',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies
     },
     snyk: true,
@@ -214,11 +218,11 @@ it('update the same script that exists (protect) from npm to yarn', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepublish: 'yarn run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies
     },
     snyk: true,

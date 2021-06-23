@@ -37,10 +37,10 @@ it('add(protect)', () => {
   expect(pkg).toEqual({
     scripts: {
       prepare: 'npm run snyk-protect',
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
@@ -55,10 +55,10 @@ it('script exists but not snyk protect (protect)', () => {
     version: '1.0.0',
     scripts: {
       prepublish: 'npm run snyk-protect',
-      // 'snyk-protect': 'snyk protect',  // this is not in the results - is this a bug?
+      'snyk-protect': 'snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies
     },
     snyk: true,
@@ -73,11 +73,11 @@ it('do not add another script if one exists (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'npm run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -92,11 +92,11 @@ it('update the same script that exists (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'npm run snyk-protect && npm run build',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -111,12 +111,12 @@ it('if both prepare/prepublish exists update first one (protect)', () => {
     name: 'package-lock-exact-match',
     version: '1.0.0',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepublish': 'npm run build',
       'prepare': 'npm run snyk-protect && npm run test',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
       ...fixtureDependencies,
     },
     snyk: true,
@@ -126,14 +126,14 @@ it('if both prepare/prepublish exists update first one (protect)', () => {
 it('default to prepare (protect)', () => {
   const pkg = {};
   lib.add(pkg, 'protect', v);
-  
+
   expect(pkg).toEqual({
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepare': 'npm run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
@@ -145,11 +145,11 @@ it('add(protect) npm 5', () => {
 
   expect(pkg).toEqual({
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       'prepare': 'npm run snyk-protect',
     },
     dependencies: {
-      snyk: `^${v}`,
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
@@ -165,19 +165,21 @@ it('add(test && protect) on empty package', () => {
   expect(pkg).toEqual({
     name: 'empty',
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepare: 'npm run snyk-protect',
       test: 'snyk test',
     },
-    devDependencies: {},
-    dependencies: {
+    devDependencies: {
       snyk: `^${v}`,
+    },
+    dependencies: {
+      '@snyk/protect': `^${v}`,
     },
     snyk: true,
   });
 });
 
-it('already testing moves to prod deps when protect', () => {
+it('keeps `snyk` in devDependencies and adds `@snyk/protect` to dependencies if already testing and you add protect', () => {
   const pkg = {
     scripts: {
       test: ' && snyk test',
@@ -191,14 +193,16 @@ it('already testing moves to prod deps when protect', () => {
   
   expect(pkg).toEqual({
     scripts: {
-      'snyk-protect': 'snyk protect',
+      'snyk-protect': 'snyk-protect',
       prepare: 'npm run snyk-protect',
       test: ' && snyk test',
     },
     dependencies: {
+      '@snyk/protect': `^${v}`,
+    },
+    devDependencies: {
       snyk: `^${v}`,
     },
-    devDependencies: {},
     snyk: true,
   });
 });

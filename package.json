@@ -12,8 +12,9 @@
   },
   "scripts": {
     "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
-    "test": "npm run test:acceptance",
+    "test": "npm run test:unit && npm run test:acceptance",
     "test:acceptance": "jest --runInBand \"/test/acceptance/((.+)/)*[^/]+\\.test\\.js\"",
+    "test:unit": "jest --runInBand \"/test/unit/((.+)/)*[^/]+\\.test\\.js\"",
     "release": "semantic-release"
   },
   "keywords": [],

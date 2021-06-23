@@ -1,4 +1,3 @@
-const { test } = require('tap');
 const lib = require('../lib');
 const fs = require('fs');
 const v = '2.0.0';
@@ -11,111 +10,95 @@ function loadFile(fileName) {
   return JSON.parse(fs.readFileSync(__dirname + '/fixtures/' + fileName, 'utf8'));
 }
 
-test('add(test)', t => {
+it('add(test)', () => {
   const pkg = getPkg();
 
   lib.add(pkg, 'test', v);
-  t.match(pkg.scripts.test, 'snyk test', 'contains test command');
-  t.equal(pkg.devDependencies.snyk, '^' + v, 'includes snyk and latest');
-
-  t.end();
+  expect(pkg.scripts.test).toContain('snyk test');
+  expect(pkg.devDependencies.snyk).toBe('^' + v);
 });
 
-test('add(protect)', t => {
+it('add(protect)', () => {
   const pkg = getPkg();
 
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
-  t.ok(!pkg.scripts.prepublish, 'does not contain prepublish');
+  expect(pkg.scripts.prepare).toContain('npm run snyk-protect');
+  expect(pkg.scripts.prepublish).toBeUndefined();
 
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('script exists but not snyk protect (protect)', t => {
+it('script exists but not snyk protect (protect)', () => {
   const pkg = loadFile('missing-snyk-protect-package.json');
 
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.prepublish, 'npm run snyk-protect', 'prepublish preserved');
-  t.ok(!pkg.scripts.prepare, 'prepare not added');
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.scripts.prepublish).toContain('npm run snyk-protect');
+  expect(pkg.scripts.prepare).toBeUndefined();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('do not add another script if one exists (protect)', t => {
+it('do not add another script if one exists (protect)', () => {
   const pkg = loadFile('with-prepublish-package.json');
   lib.add(pkg, 'protect', v);
-  t.equal(pkg.scripts.prepublish, 'npm run snyk-protect', 'contains protect command');
-  t.ok(!pkg.scripts.prepare, 'prepare not added');
+  expect(pkg.scripts.prepublish).toContain('npm run snyk-protect');
+  expect(pkg.scripts.prepare).toBeUndefined();
 
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('update the same script that exists (protect)', t => {
+it('update the same script that exists (protect)', () => {
   const pkg = loadFile('prepublish-without-snyk-package.json');
   lib.add(pkg, 'protect', v);
-  t.equal(pkg.scripts.prepublish, 'npm run snyk-protect && npm run build', 'contains protect command');
-  t.ok(!pkg.scripts.prepare, 'prepare not added');
+  expect(pkg.scripts.prepublish).toBe('npm run snyk-protect && npm run build');
+  expect(pkg.scripts.prepare).toBeUndefined();
 
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('if both prepare/prepublish exists update first one (protect)', t => {
+it('if both prepare/prepublish exists update first one (protect)', () => {
   const pkg = loadFile('with-prepare-and-prepublish-package.json');
   lib.add(pkg, 'protect', v);
-  t.equal(pkg.scripts.prepare, 'npm run snyk-protect && npm run test', 'contains protect command');
-  t.equal(pkg.scripts.prepublish, 'npm run build', 'prepublish not changed');
+  expect(pkg.scripts.prepare).toBe('npm run snyk-protect && npm run test');
+  expect(pkg.scripts.prepublish).toBe('npm run build');
 
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('default to prepare (protect)', t => {
+it('default to prepare (protect)', () => {
   const pkg = getPkg();
   lib.add(pkg, 'protect', v);
-  t.equal(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
-  t.ok(!pkg.scripts.prepublish, 'prepublish not added');
+  expect(pkg.scripts.prepare).toBe('npm run snyk-protect');
+  expect(pkg.scripts.prepublish).toBeUndefined();
 
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('add(protect) npm 5', t => {
+it('add(protect) npm 5', () => {
   const pkg = getPkg();
 
   lib.add(pkg, 'protect', v, 'prepare');
-  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.scripts.prepare).toContain('npm run snyk-protect');
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.snyk).toBe(true);
 });
 
-test('add(test && protect) on empty package', t => {
+it('add(test && protect) on empty package', () => {
   const pkg = {
     name: 'empty',
   };
 
   lib.add(pkg, 'test', v);
   lib.add(pkg, 'protect', v);
-  t.match(pkg.scripts.test, 'snyk test', 'contains test command');
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
+  expect(pkg.scripts.test).toContain('snyk test');
+  expect(pkg.dependencies.snyk).toBe('^' + v);
 
-  t.deepEqual(pkg, {
+  expect(pkg).toEqual({
     name: 'empty',
     scripts: {
       'snyk-protect': 'snyk protect',
@@ -127,23 +110,18 @@ test('add(test && protect) on empty package', t => {
       snyk: `^${v}`,
     },
     snyk: true,
-  }, 'structured as expected');
-
-  t.end();
+  });
 });
 
-
-test('already testing moves to prod deps when protect', t => {
+it('already testing moves to prod deps when protect', () => {
   const pkg = getPkg();
   const oldVersion = '1.0.0';
   pkg.devDependencies.snyk = oldVersion;
   pkg.scripts.test = ' && snyk test';
 
   lib.add(pkg, 'protect', v, 'prepare');
-  t.match(pkg.scripts.prepare, 'npm run snyk-protect', 'contains protect command');
-  t.equal(pkg.dependencies.snyk, '^' + v, 'includes snyk and latest');
-  t.isa(pkg.devDependencies.snyk, undefined, 'snyk stripped from devDeps');
-  t.equal(pkg.snyk, true, 'flagged as snyk');
-
-  t.end();
+  expect(pkg.scripts.prepare).toContain('npm run snyk-protect');
+  expect(pkg.dependencies.snyk).toBe('^' + v);
+  expect(pkg.devDependencies.snyk).toBeUndefined();
+  expect(pkg.snyk).toBe(true);
 });

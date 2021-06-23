@@ -16,193 +16,185 @@ const fixtureDependencies = {
   semver: '3.0.0'
 }
 
-it('add(test)', () => {
-  const pkg = {};
-  lib.add(pkg, 'test', v);
-
-  expect(pkg).toEqual({
-    scripts: {
-      test: 'snyk test'
-    },
-    devDependencies: {
-      snyk: `^${v}`,
-    }
-  });
-});
-
-it('add(protect)', () => {
-  const pkg = {};
-  lib.add(pkg, 'protect', v);
+describe('add(test)', () => {
+  it('adds `snyk` dependency and `test` script', () => {
+    const pkg = {};
+    lib.add(pkg, 'test', v);
   
-  expect(pkg).toEqual({
-    scripts: {
-      prepare: 'npm run snyk-protect',
-      'snyk-protect': 'snyk-protect',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-    },
-    snyk: true,
+    expect(pkg).toEqual({
+      scripts: {
+        test: 'snyk test'
+      },
+      devDependencies: {
+        snyk: `^${v}`,
+      }
+    });
   });
 });
 
-it('script exists but not snyk protect (protect)', () => {
-  const pkg = loadFile('missing-snyk-protect-package.json');
-  lib.add(pkg, 'protect', v);
+describe('add(protect)', () => {
+  it('adds `@snyk/protect` dependency and `prepare` / `snyk-protect` scripts', () => {
+    const pkg = {};
+    lib.add(pkg, 'protect', v);
+    
+    expect(pkg).toEqual({
+      scripts: {
+        prepare: 'npm run snyk-protect',
+        'snyk-protect': 'snyk-protect',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+      },
+      snyk: true,
+    });
+  });
+
+  it('adds `@snyk/protect` dependency when a protect script exists but the dependency is missing', () => {
+    const pkg = loadFile('missing-snyk-protect-package.json');
+    lib.add(pkg, 'protect', v);
+    
+    expect(pkg).toEqual({
+      name: 'package-lock-exact-match',
+      version: '1.0.0',
+      scripts: {
+        prepublish: 'npm run snyk-protect',
+        'snyk-protect': 'snyk-protect',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+        ...fixtureDependencies
+      },
+      snyk: true,
+    });
+  });
+
+  it('does not add another script if one exists already', () => {
+    const pkg = loadFile('with-prepublish-package.json');
+    lib.add(pkg, 'protect', v);
   
-  expect(pkg).toEqual({
-    name: 'package-lock-exact-match',
-    version: '1.0.0',
-    scripts: {
-      prepublish: 'npm run snyk-protect',
-      'snyk-protect': 'snyk-protect',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-      ...fixtureDependencies
-    },
-    snyk: true,
+    expect(pkg).toEqual({
+      name: 'package-lock-exact-match',
+      version: '1.0.0',
+      scripts: {
+        'snyk-protect': 'snyk-protect',
+        'prepublish': 'npm run snyk-protect',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+        ...fixtureDependencies,
+      },
+      snyk: true,
+    });
   });
-});
 
-it('do not add another script if one exists (protect)', () => {
-  const pkg = loadFile('with-prepublish-package.json');
-  lib.add(pkg, 'protect', v);
-
-  expect(pkg).toEqual({
-    name: 'package-lock-exact-match',
-    version: '1.0.0',
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      'prepublish': 'npm run snyk-protect',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-      ...fixtureDependencies,
-    },
-    snyk: true,
-  });
-});
-
-it('update the same script that exists (protect)', () => {
-  const pkg = loadFile('prepublish-without-snyk-package.json');
-  lib.add(pkg, 'protect', v);
-
-  expect(pkg).toEqual({
-    name: 'package-lock-exact-match',
-    version: '1.0.0',
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      'prepublish': 'npm run snyk-protect && npm run build',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-      ...fixtureDependencies,
-    },
-    snyk: true,
-  });
-});
-
-it('if both prepare/prepublish exists update first one (protect)', () => {
-  const pkg = loadFile('with-prepare-and-prepublish-package.json');
-  lib.add(pkg, 'protect', v);
+  it('updates the same script (`prepublish`) if it exists already and adds missing `@snyk/protect` dependency', () => {
+    const pkg = loadFile('prepublish-without-snyk-package.json');
+    lib.add(pkg, 'protect', v);
   
-  expect(pkg).toEqual({
-    name: 'package-lock-exact-match',
-    version: '1.0.0',
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      'prepublish': 'npm run build',
-      'prepare': 'npm run snyk-protect && npm run test',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-      ...fixtureDependencies,
-    },
-    snyk: true,
+    expect(pkg).toEqual({
+      name: 'package-lock-exact-match',
+      version: '1.0.0',
+      scripts: {
+        'snyk-protect': 'snyk-protect',
+        'prepublish': 'npm run snyk-protect && npm run build',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+        ...fixtureDependencies,
+      },
+      snyk: true,
+    });
   });
-});
 
-it('default to prepare (protect)', () => {
-  const pkg = {};
-  lib.add(pkg, 'protect', v);
-
-  expect(pkg).toEqual({
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      'prepare': 'npm run snyk-protect',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-    },
-    snyk: true,
+  it('updates `prepare` if both `prepare` and `prepublish` already exist and adds missing `@snyk/protect` dependency', () => {
+    const pkg = loadFile('with-prepare-and-prepublish-package.json');
+    lib.add(pkg, 'protect', v);
+    
+    expect(pkg).toEqual({
+      name: 'package-lock-exact-match',
+      version: '1.0.0',
+      scripts: {
+        'snyk-protect': 'snyk-protect',
+        'prepublish': 'npm run build',
+        'prepare': 'npm run snyk-protect && npm run test',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+        ...fixtureDependencies,
+      },
+      snyk: true,
+    });
   });
-});
 
-it('add(protect) npm 5', () => {
-  const pkg = {};
-  lib.add(pkg, 'protect', v, 'prepare');
-
-  expect(pkg).toEqual({
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      'prepare': 'npm run snyk-protect',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-    },
-    snyk: true,
-  });
-});
-
-it('add(test && protect) on empty package', () => {
-  const pkg = {
-    name: 'empty',
-  };
-  lib.add(pkg, 'test', v);
-  lib.add(pkg, 'protect', v);
+  it('works with a passed-in command name (for npm 5)', () => {
+    const pkg = {};
+    lib.add(pkg, 'protect', v, 'prepare');
   
-  expect(pkg).toEqual({
-    name: 'empty',
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      prepare: 'npm run snyk-protect',
-      test: 'snyk test',
-    },
-    devDependencies: {
-      snyk: `^${v}`,
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-    },
-    snyk: true,
+    expect(pkg).toEqual({
+      scripts: {
+        'snyk-protect': 'snyk-protect',
+        'prepare': 'npm run snyk-protect',
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+      },
+      snyk: true,
+    });
+  });
+
+  describe('if you are already testing', () => {
+    it('keeps `snyk` in devDependencies and adds `@snyk/protect` to dependencies and adds `prepare` and `test` scripts', () => {
+      const pkg = {
+        scripts: {
+          test: ' && snyk test',
+        },
+        devDependencies: {
+          snyk: '1.0.0',
+        },
+      };
+
+      lib.add(pkg, 'protect', v, 'prepare');
+      
+      expect(pkg).toEqual({
+        scripts: {
+          'snyk-protect': 'snyk-protect',
+          prepare: 'npm run snyk-protect',
+          test: ' && snyk test',
+        },
+        dependencies: {
+          '@snyk/protect': `^${v}`,
+        },
+        devDependencies: {
+          snyk: `^${v}`,
+        },
+        snyk: true,
+      });
+    });
   });
 });
 
-it('keeps `snyk` in devDependencies and adds `@snyk/protect` to dependencies if already testing and you add protect', () => {
-  const pkg = {
-    scripts: {
-      test: ' && snyk test',
-    },
-    devDependencies: {
-      snyk: '1.0.0',
-    },
-  };
-
-  lib.add(pkg, 'protect', v, 'prepare');
-  
-  expect(pkg).toEqual({
-    scripts: {
-      'snyk-protect': 'snyk-protect',
-      prepare: 'npm run snyk-protect',
-      test: ' && snyk test',
-    },
-    dependencies: {
-      '@snyk/protect': `^${v}`,
-    },
-    devDependencies: {
-      snyk: `^${v}`,
-    },
-    snyk: true,
-  });
+describe('add(test) and add(protect)', () => {
+  it('add `snyk` and `@snyk/protect` to devDependencies and dependencies (respectively) and add required scripts', () => {
+    const pkg = {
+      name: 'empty',
+    };
+    lib.add(pkg, 'test', v);
+    lib.add(pkg, 'protect', v);
+    
+    expect(pkg).toEqual({
+      name: 'empty',
+      scripts: {
+        'snyk-protect': 'snyk-protect',
+        prepare: 'npm run snyk-protect',
+        test: 'snyk test',
+      },
+      devDependencies: {
+        snyk: `^${v}`,
+      },
+      dependencies: {
+        '@snyk/protect': `^${v}`,
+      },
+      snyk: true,
+    });
+  });  
 });

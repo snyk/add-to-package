@@ -1,13 +1,14 @@
-const lib = require('../lib');
+const lib = require('../../lib');
 const fs = require('fs');
+const path = require('path');
 const v = '2.0.0';
 
 function getPkg() {
-  return JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
+  return JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf8'));
 }
 
 function loadFile(fileName) {
-  return JSON.parse(fs.readFileSync(__dirname + '/fixtures/' + fileName, 'utf8'));
+  return JSON.parse(fs.readFileSync(path.resolve(__dirname, '../fixtures/' + fileName), 'utf8'));
 }
 
 it('add(test)', () => {

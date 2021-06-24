@@ -72,7 +72,7 @@ describe("updateSnykProtectDependency", () => {
       lib.updateSnykProtectDependency(pkg, true, "1.650.0");
       expect(pkg).toEqual({
         dependencies: {
-          "@snyk/protect": "^1.650.0",
+          "@snyk/protect": "latest",
         },
       });
     });
@@ -86,7 +86,7 @@ describe("updateSnykProtectDependency", () => {
       lib.updateSnykProtectDependency(pkg, true, "1.650.0");
       expect(pkg).toEqual({
         dependencies: {
-          "@snyk/protect": "^1.650.0",
+          "@snyk/protect": "latest",
         },
       });
     });

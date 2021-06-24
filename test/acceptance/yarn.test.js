@@ -43,7 +43,7 @@ describe('add(protect)', () => {
         'snyk-protect': 'snyk-protect',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
       },
       snyk: true,
     });
@@ -61,7 +61,7 @@ describe('add(protect)', () => {
         'snyk-protect': 'snyk-protect',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies
       },
       snyk: true,
@@ -80,7 +80,7 @@ describe('add(protect)', () => {
         'prepublish': 'yarn run snyk-protect',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies,
       },
       snyk: true,
@@ -99,7 +99,7 @@ describe('add(protect)', () => {
         'prepublish': 'yarn run snyk-protect && yarn run build',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies,
       },
       snyk: true,
@@ -119,7 +119,7 @@ describe('add(protect)', () => {
         'prepare': 'yarn run snyk-protect && yarn run test',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies,
       },
       snyk: true,
@@ -146,7 +146,7 @@ describe('add(protect)', () => {
           test: ' && snyk test',
         },
         dependencies: {
-          '@snyk/protect': `^${v}`,
+          '@snyk/protect': `latest`,
         },
         devDependencies: {
           snyk: `^${v}`,
@@ -168,7 +168,7 @@ describe('add(protect)', () => {
         prepublish: 'yarn run snyk-protect',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies
       },
       snyk: true,
@@ -187,7 +187,7 @@ describe('add(protect)', () => {
         prepublish: 'yarn run snyk-protect && yarn run build',
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
         ...fixtureDependencies
       },
       snyk: true,
@@ -214,7 +214,7 @@ describe('add(test) and add(protect)', () => {
         snyk: `^${v}`,
       },
       dependencies: {
-        '@snyk/protect': `^${v}`,
+        '@snyk/protect': `latest`,
       },
       snyk: true,
     });

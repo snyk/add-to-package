@@ -12,13 +12,16 @@
   },
   "scripts": {
     "cover": "tap -R spec --cov --coverage-report=lcov test/*.test.js",
-    "test": "tap -R spec test/*.test.js",
+    "test": "npm run test:unit && npm run test:acceptance",
+    "test:acceptance": "jest --runInBand \"/test/acceptance/((.+)/)*[^/]+\\.test\\.js\"",
+    "test:unit": "jest --runInBand \"/test/unit/((.+)/)*[^/]+\\.test\\.js\"",
     "release": "semantic-release"
   },
   "keywords": [],
   "author": "snyk.io",
   "license": "Apache-2.0",
   "devDependencies": {
+    "jest": "^27.0.4",
     "semantic-release": "^17.4.4",
     "tap": "^12.6.1"
   },
